@@ -1,3 +1,7 @@
 a {
     border: black solid 1px;
 }
+button {
+    padding: 0%;
+    border: 0%;
+}
