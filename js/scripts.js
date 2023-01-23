@@ -36,8 +36,9 @@ if (document.title === "Library") {
     const arrayLibros = librosParseados.results
     const pintandoLibros = arrayLibros.books
     pintarLibros(pintandoLibros)
-    botonFavoritos(pintandoLibros)
+    traerUser(pintandoLibros)
   }
+  const arrayFavoritos = []
   //Toma el array con los datos de la lista de libros como parametro y usando un for pinta los libros.
   function pintarLibros(pintandoLibros) {
     const union = document.getElementById("collections")
@@ -62,9 +63,9 @@ if (document.title === "Library") {
         <button id="fav${i}"type="button">Save to favorites</button>`
       const boton = document.getElementById(`fav${i}`)
       boton.addEventListener('click', function () {
-        const arrayFavoritos = []
         arrayFavoritos.push(libroFavorito)
-        addFav(firebase.auth().currentUser.uid, arrayFavoritos)
+          addFav(firebase.auth().currentUser.uid, arrayFavoritos,libroFavorito)
+        boton.style.display = "none"
       })
     }
     const backBoton = document.createElement("button")
@@ -79,35 +80,32 @@ if (document.title === "Library") {
 
 }
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCJ7GxBZvxTOwHKaoz_3lKm0Opj95qH04I",
+//   authDomain: "bibliotecanyt-7d5a5.firebaseapp.com",
+//   projectId: "bibliotecanyt-7d5a5",
+//   storageBucket: "bibliotecanyt-7d5a5.appspot.com",
+//   messagingSenderId: "596751183669",
+//   appId: "1:596751183669:web:d805b9fbfaee7cc912a67c"
+// };
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAG7YfGwhbdbixo6bJomrhwUnTJ6b-txYg",
+//   authDomain: "bibliotecanyt-a67ca.firebaseapp.com",
+//   projectId: "bibliotecanyt-a67ca",
+//   storageBucket: "bibliotecanyt-a67ca.appspot.com",
+//   messagingSenderId: "529034132884",
+//   appId: "1:529034132884:web:1918f970d8482530916381"
+// };
 const firebaseConfig = {
-  apiKey: "AIzaSyC3sHZYxlku8SXnGSSCL_wnH6LNoLS2v2I",
-  authDomain: "bibliotecanyt-c2ed1.firebaseapp.com",
-  projectId: "bibliotecanyt-c2ed1",
-  storageBucket: "bibliotecanyt-c2ed1.appspot.com",
-  messagingSenderId: "326067608596",
-  appId: "1:326067608596:web:b63a139d0a5f4970479b01"
+  apiKey: "AIzaSyAN-BJJO50zvvI7IztGrQU7cgWNN92ob8I",
+  authDomain: "bibliotecanyt2.firebaseapp.com",
+  projectId: "bibliotecanyt2",
+  storageBucket: "bibliotecanyt2.appspot.com",
+  messagingSenderId: "969628857349",
+  appId: "1:969628857349:web:f27b81ed06e66142ba186c"
 };
 
 firebase.initializeApp(firebaseConfig);// Inicializaar app Firebase
-
-// // SUBIR UNA IMAGEN AL CLOUD
-// // Create a root reference
-// var storageRef = firebase.storage().ref();
-
-// // Create a reference to 'mountains.jpg'
-// var mountainsRef = storageRef.child('styles\descarga.jpg');
-
-// // Create a reference to 'images/mountains.jpg'
-// var mountainImagesRef = storageRef.child('styles\descarga.jpg');
-
-// // While the file names are the same, the references point to different files
-// mountainsRef.name === mountainImagesRef.name;           // true
-// mountainsRef.fullPath === mountainImagesRef.fullPath;   // false
-
-
-
-
-
 
 const db = firebase.firestore();
 const createUser = (user) => {
@@ -116,32 +114,7 @@ const createUser = (user) => {
     .then((docRef) => console.log("Document written with ID: ", docRef.id))
     .catch((error) => console.error("Error adding document: ", error));
 };
-// const readAllUsers = (born) => {
-//   db.collection("users")
-//     .where("first", "==", born)
-//     .get()
-//     .then((querySnapshot) => {
-//       querySnapshot.forEach((doc) => {
-//         console.log(doc.data());
-//       });
-//     });
-// };
-// function readOne(id) {
-//   db.collection("users")
-//     .doc(id)
-//     .get()
-//     .then((doc) => {
-//       if (doc.exists) {
-//         console.log("Document data:", doc.data());
-//       } else {
-//         // doc.data() will be undefined in this case
-//         console.log("No such document!");
-//       }
-//     })
-//     .catch((error) => {
-//       console.log("Error getting document:", error);
-//     });
-// }
+//crear usuario
 const signUpUser = (email, password) => {
   firebase
     .auth()
@@ -168,7 +141,7 @@ const signUpUser = (email, password) => {
       console.log("Error en el sistema" + errorCode);
     });
 };
-//"alex@demo.com","123456"
+//validar usuario
 if (document.title === "SingUp") {
   document.getElementById("form1").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -178,13 +151,13 @@ if (document.title === "SingUp") {
     // let url = event.target.elements.text.value;
     if (pass === pass2) {
       signUpUser(email, pass);
-      enviarVerificacion(email);
-      confirmarEmail(email);
+      // enviarVerificacion(email);
+      // confirmarEmail(email);
     } else {
       alert("error password");
     }
   })
-
+  //confirmar Email
   function confirmarEmail(email) {
 
     const user = firebase.auth().currentUser;
@@ -197,7 +170,7 @@ if (document.title === "SingUp") {
       console.log("fallo!")
     });
   }
-
+  //enviar email de verificacion
   function enviarVerificacion(email) {
 
     firebase.auth().currentUser.sendEmailVerification(email)
@@ -208,6 +181,7 @@ if (document.title === "SingUp") {
   }
 }
 // if (document.title === "LogIn") {
+//logearse
 const signInUser = (email, password) => {
   firebase.auth().signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
@@ -281,7 +255,8 @@ if (document.title === "LogIn") {
     }
   });
 }
-function botonFavoritos(pintandoLibros) {
+
+function traerUser(longuitudLibros) {
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       const userID = firebase.auth().currentUser.uid
@@ -297,7 +272,7 @@ function botonFavoritos(pintandoLibros) {
       const botonListaFav = document.getElementById("favList")
       botonListaFav.style.display = "none"
 
-      for (let i = 0; i < pintandoLibros.length; i++) {
+      for (let i = 0; i < longuitudLibros.length; i++) {
         const botonFav = document.getElementById(`fav${i}`)
         botonFav.style.display = "none"
 
@@ -312,31 +287,43 @@ function botonFavoritos(pintandoLibros) {
   });
 }
 //Subiendo favoritos a firebase
-function addFav(userID, arrayFavoritos) {
+function addFav(userID, arrayFavoritos, libroFavorito) {
   db.collection('users')
     .where('id', '==', userID)
     .get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
-        if (!doc.data().hasOwnProperty('favs')) {
-          doc.ref.update({ favoritos: arrayFavoritos });
+      if(!doc.data().favoritos.includes(libroFavorito)){
+        console.log(doc.data().favoritos)
+        if (!doc.data().hasOwnProperty('favoritos')) {
+          doc.ref.update({ favoritos: [...arrayFavoritos] });
           console.log(arrayFavoritos)
-          console.log("coleccion subida a fireBase")
+          console.log("Libro subido a fireBase")
         } else {
-          console.log("Fallo display none boton añadir favoritos")
+          doc.ref.update({ favoritos: doc.data().favoritos.concat(...arrayFavoritos) })
+          console.log("Fallo")
           // doc.ref.update({ favoritos: doc.data().favs.concat(arrayFavoritos) });
         }
+      }
       });
     });
 }
+//trayendo favoritos al cliclar el boton
+const cargarFavoritos = document.getElementById("traerFavs")
+cargarFavoritos.addEventListener('click', () =>
+  traerFavoritos(firebase.auth().currentUser.uid)
+)
+function traerFavoritos(userID) {
+  db.collection('users')
+    .where('id', '==', userID)
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        const colecionUsuario = doc.data().favoritos
+        console.log(colecionUsuario)
+      })
+      // document.getElementById('backf-button').onclick = createMainList;
+    })
+}
 
-// function traerFavoritos(userID) {
-//   db.collection('users')
-//     .where('id', '==', userID)
-//     .get()
-//     .then((snapshot) => {
-
-//       console.log(snapshot)
-//       // document.getElementById('backf-button').onclick = createMainList;
-//     })
-// }
+//FALTA PASAR LOS DATOS QUE YA HE TRAIDO DE FIREBASE Y QUE APARECEN POR CONSOLA CUANDO PULSO TRAER FAVORITOSA UNA FUNCION QUE LOS PINTE Y LA FOTO DE USUARIO.
